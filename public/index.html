@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AirBridge — Free, secure, peer-to-peer file sharing across any device. No login. No storage. End-to-end encrypted.">
+<meta property="og:title" content="AirBridge – Share Files Instantly">
+<meta property="og:description" content="Send files between iPhone, Android, Windows, Mac — no app, no login, no subscription.">
+<title>AirBridge – Share Files Instantly</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- ORBS -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    AirBridge
+  </div>
+  <div class="nav-right">
+    <div class="nav-badges">
+      <div class="nav-badge"><div class="dot"></div>E2E Encrypted</div>
+      <div class="nav-badge">No Storage</div>
+      <div class="nav-badge">All Devices</div>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
+</nav>
+
+<!-- STEP PROGRESS -->
+<div class="step-progress" id="stepProgress">
+  <div class="step-trail" id="stepTrail"></div>
+  <div class="step-count" id="stepCount"></div>
+</div>
+
+<!-- BACK -->
+<button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 1 — HERO
+════════════════════════════════════════════ -->
+<div class="screen active" id="screen-hero">
+  <div class="hero-wrap">
+    <div class="hero-pill"><div class="hero-pill-dot"></div>Free · No Login · No Limits</div>
+    <h1>Share Files Instantly.<br><span class="grad">No Login. No Limits.</span></h1>
+    <p class="hero-sub">Send any file between iPhone, Android, Windows, Mac or Linux — directly and securely. No app download. No account ever.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="startSender()"><span>⬆</span> Send File</button>
+      <button class="btn btn-outline" onclick="startReceiver()"><span>⬇</span> Receive File</button>
+    </div>
+
+    <div class="how-row">
+      <div class="how-step"><div class="how-num">1</div>Choose Send or Receive</div>
+      <div class="how-step"><div class="how-num">2</div>Scan QR or enter code</div>
+      <div class="how-step"><div class="how-num">3</div>Drop files &amp; transfer</div>
+    </div>
+
+    <div class="device-stage">
+      <div class="dv dv-phone dv-l"><div class="dv-emoji">📱</div><div class="dv-lbl">Your Device</div></div>
+      <div class="dv dv-c"><div class="dv-emoji">⚡</div><div class="dv-lbl">AirBridge</div></div>
+      <div class="dv dv-phone dv-r"><div class="dv-emoji">💻</div><div class="dv-lbl">Any Device</div></div>
+      <div class="xline"></div>
+      <div class="xdot"></div>
+      <div class="xdot xdot2"></div>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item"><span>🔐</span>AES-256 Encrypted</div>
+      <div class="trust-item"><span>🚫</span>Zero File Storage</div>
+      <div class="trust-item"><span>✅</span>SHA-256 Verified</div>
+      <div class="trust-item"><span>📡</span>Peer-to-Peer Direct</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 2 — SENDER
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-sender">
+  <div class="conn-wrap">
+    <div class="screen-head">
+      <div class="screen-tag">Step 2 of 4 — Sender</div>
+      <div class="screen-title">Share Your Code</div>
+      <div class="screen-sub">Ask the receiver to scan or enter the code</div>
+    </div>
+
+    <div class="my-device-badge" id="senderMyBadge">
+      <span style="font-size:20px">💻</span>
+      <div><div style="font-weight:700;font-size:13px">Detecting device…</div></div>
+    </div>
+
+    <div class="qr-outer">
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="code-row">
+      <div class="room-code" id="roomCode">Generating…</div>
+      <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy</button>
+    </div>
+
+    <div class="qr-waiting"><div class="spinner"></div>Waiting for receiver to connect…</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 3 — RECEIVER
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-receiver">
+  <div class="conn-wrap">
+    <div class="screen-head">
+      <div class="screen-tag">Step 2 of 4 — Receiver</div>
+      <div class="screen-title">Connect to Sender</div>
+      <div class="screen-sub">Scan the QR code or enter the room code</div>
+    </div>
+
+    <div class="my-device-badge" id="receiverMyBadge">
+      <span style="font-size:20px">💻</span>
+      <div><div style="font-weight:700;font-size:13px">Detecting device…</div></div>
+    </div>
+
+    <!-- Camera scanner -->
+    <div id="scannerWrapper" style="display:none;position:relative;width:100%;max-width:280px;margin:0 auto 16px">
+      <video id="scannerVideo" style="width:100%;border-radius:14px;background:#000" playsinline></video>
+      <canvas id="scannerCanvas" style="display:none"></canvas>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" onclick="stopScanner()">✕ Close Camera</button>
+    </div>
+
+    <div class="scan-frame" onclick="startScanner()" style="cursor:pointer" title="Click to open camera">
+      <div class="scan-corner tl"></div>
+      <div class="scan-corner tr"></div>
+      <div class="scan-corner bl"></div>
+      <div class="scan-corner br"></div>
+      <div class="scan-sweep"></div>
+      <div style="text-align:center">
+        <div style="font-size:32px;margin-bottom:6px">📷</div>
+        <div style="font-size:12px;color:var(--muted)">Tap to scan QR</div>
+      </div>
+    </div>
+
+    <div class="divider">or enter code manually</div>
+
+    <input type="text" class="code-input" id="codeInput" placeholder="e.g. A7F-X2K" maxlength="7" oninput="formatCode(this)">
+
+    <div id="connectingState" style="display:none;padding:14px 0;text-align:center">
+      <div class="conn-dots"><div class="conn-dot"></div><div class="conn-dot"></div><div class="conn-dot"></div></div>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px">Connecting to sender…</div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:12px" id="connectBtn" onclick="connectReceiver()">Connect</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 4 — CONNECTED
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-connected">
+  <div class="connected-scene">
+    <div class="secure-pill"><div class="secure-dot"></div>Military-grade secure connection established</div>
+
+    <div class="bridge-row">
+      <div class="dev-pill" id="senderPill">
+        <div class="dev-pill-ico">📱</div>
+        <div class="dev-pill-name">Sender</div>
+        <div class="dev-pill-sub">Connected</div>
+        <div class="dev-pill-role">Sender</div>
+      </div>
+      <div class="bridge-line"><div class="bridge-pkt"></div></div>
+      <div class="dev-pill" id="receiverPill">
+        <div class="dev-pill-ico">💻</div>
+        <div class="dev-pill-name">Receiver</div>
+        <div class="dev-pill-sub">Connected</div>
+        <div class="dev-pill-role">Receiver</div>
+      </div>
+    </div>
+
+    <div class="conn-info">
+      <div class="conn-info-title">Connection Details</div>
+      <div class="conn-grid">
+        <div><div class="conn-cell-label">Protocol</div><div class="conn-cell-val blue">WebRTC P2P</div></div>
+        <div><div class="conn-cell-label">Encryption</div><div class="conn-cell-val">AES-256-GCM</div></div>
+        <div><div class="conn-cell-label">Status</div><div class="conn-cell-val green">Connected ✓</div></div>
+        <div><div class="conn-cell-label">Room Code</div><div class="conn-cell-val blue" id="connRoomCode">—</div></div>
+      </div>
+    </div>
+
+    <div id="connAction">
+      <button class="btn btn-primary" style="width:100%" onclick="goToTransfer()">Select Files to Send →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 5 — TRANSFER
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-transfer">
+  <div class="xfer-wrap">
+    <div class="screen-head">
+      <div class="screen-tag">Step 4 of 4 — Transfer</div>
+      <div class="screen-title">Send Your Files</div>
+      <div class="screen-sub">Drop files or browse — any type, up to 10 GB per file</div>
+    </div>
+
+    <div class="xfer-device-row">
+      <div class="xfer-dev-tag" id="xferFrom">💻 This Device</div>
+      <span style="color:var(--blue);font-size:16px">→</span>
+      <div class="xfer-dev-tag" id="xferTo">📱 Receiver</div>
+      <span style="margin-left:auto;color:var(--success);font-size:11px;font-weight:700">● Connected</span>
+    </div>
+
+    <input type="file" id="fileInput" multiple onchange="handleFiles(this.files)" style="display:none">
+
+    <div class="drop-zone" id="dropZone"
+      onclick="document.getElementById('fileInput').click()"
+      ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFiles(event)">
+      <div style="font-size:38px;margin-bottom:10px">📂</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:5px">Drop files here</div>
+      <div style="font-size:12px;color:var(--muted)">All file types · Multiple files · Up to 10 GB</div>
+      <div class="browse-btn">Browse Files</div>
+    </div>
+
+    <div class="size-warning" id="sizeWarning">⚠️ Large file detected — transfer may take several minutes.</div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <div id="addMoreWrap" style="display:none">
+      <div class="add-more" onclick="document.getElementById('fileInput').click()">+ Add More Files</div>
+    </div>
+
+    <div class="progress-block" id="progressBlock" style="display:none">
+      <div class="prog-header">
+        <span class="prog-label" id="progLabel">Sending…</span>
+        <div style="display:flex;gap:12px;font-size:12px;color:var(--muted)">
+          <span id="progPct">0%</span>
+          <span class="prog-speed" id="progSpeed">— MB/s</span>
+        </div>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+      </div>
+      <div class="prog-stats">
+        <span id="sentLabel">0 MB sent</span>
+        <span id="etaLabel">Calculating…</span>
+      </div>
+      <div class="cancel-btn" onclick="cancelTransfer()">✕ Cancel Transfer</div>
+    </div>
+
+    <div class="xfer-actions" id="xferActions" style="display:none">
+      <button class="btn btn-primary" style="flex:1" id="sendBtn" onclick="startTransfer()">⬆ Start Transfer</button>
+    </div>
+
+    <div class="trust-mini">
+      <div class="trust-mini-item">🔐 Encrypted before sending</div>
+      <div class="trust-mini-item">✅ SHA-256 integrity check</div>
+      <div class="trust-mini-item">📡 Direct peer transfer</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 6 — SUCCESS
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-success">
+  <div class="success-wrap">
+    <div class="success-ring"><div class="success-check">✅</div></div>
+    <div class="success-title">Transfer Complete!</div>
+    <div class="success-sub">Files delivered safely and verified intact.</div>
+    <div class="success-receipt">
+      <div class="receipt-title">Transfer Receipt</div>
+      <div id="receiptRows"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1" onclick="resetApp()">Send Again</button>
+      <button class="btn btn-primary" style="flex:1" onclick="shareReceipt()">Share Receipt</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a class="footer-link" href="#">Privacy Policy</a>
+    <a class="footer-link" href="#">Terms of Use</a>
+    <a class="footer-link" href="#">How It Works</a>
+    <a class="footer-link" href="https://github.com/yourusername/airbridge" target="_blank">GitHub</a>
+  </div>
+  <div class="footer-copy">© 2025 AirBridge · Free forever · No subscription</div>
+</footer>
+
+<!-- LIBRARIES -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<!-- APP SCRIPTS -->
+<script src="/js/device.js"></script>
+<script src="/js/webrtc.js"></script>
+<script src="/js/scanner.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>
